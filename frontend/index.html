@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Habit Tracker — Polished UI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* subtle glassy header bottom shadow */
+    .header-glow {
+      box-shadow: 0 6px 18px rgba(58, 83, 155, 0.06);
+    }
+
+    /* input and button focus */
+    input:focus, button:focus {
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(99,102,241,0.08);
+    }
+
+    /* Make canvas cover the entire background */
+    #bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-b from-rose-50 via-rose-25 to-white min-h-screen font-sans antialiased text-gray-800">
+
+  <!-- BACKGROUND CANVAS -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- NAVBAR -->
+  <header class="header-glow sticky top-0 z-30 bg-white/80 backdrop-blur-md">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="flex items-center justify-between h-16">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-pink-300 to-amber-300 flex items-center justify-center shadow-md">
+            <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 21s-1-.45-2.1-1.36C6.8 16.9 4 14.1 4 10.9 4 8.3 6.24 6 8.86 6c1.6 0 3 .86 3.97 2.09C13.14 6.86 14.54 6 16.14 6 18.76 6 21 8.3 21 10.9c0 3.2-2.8 6-5.9 8.75C13 20.5 12 21 12 21z"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-lg font-bold tracking-tight">Habit Tracker</h1>
+          </div>
+        </div>
+
+        <div class="hidden md:flex items-center gap-4">
+          <a class="text-sm px-4 py-2 rounded-full hover:bg-indigo-50 text-indigo-600 font-medium shadow-sm" href="index.html">Home</a>
+          <a class="text-sm px-4 py-2 rounded-full bg-indigo-100 text-indigo-700 font-semibold shadow" href="about.html">About</a>
+        </div>
+
+        <div class="md:hidden">
+          <button class="p-2 rounded-md bg-white/60 shadow-sm hover:bg-white transition">
+            <svg class="w-5 h-5 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <!-- HERO / HABIT FORM -->
+    <section class="mb-8">
+      <div class="rounded-2xl bg-white shadow-lg p-6 sm:p-8 transform transition duration-300 hover:-translate-y-1">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+          <div class="flex-1">
+            <h2 class="text-2xl font-bold">Add a Habit</h2>
+            <p class="text-sm text-gray-500 mt-1">Create a small, repeatable habit. Keep it simple — consistency wins.</p>
+          </div>
+
+          <form id="habit-form" class="w-full sm:w-auto flex flex-col sm:flex-row items-stretch gap-4 mt-4 sm:mt-0">
+            <label class="sr-only" for="habit-name">Habit name</label>
+            <input id="habit-name" type="text" placeholder="Enter habit name"
+                   class="flex-1 rounded-xl border border-gray-200 px-4 py-3 placeholder-gray-400 shadow-sm focus:ring-2 focus:ring-indigo-200" />
+
+            <label class="sr-only" for="habit-goal">Goal</label>
+            <input id="habit-goal" type="text" placeholder="Goal (e.g., 10 min / 2x day)"
+                   class="w-48 rounded-xl border border-gray-200 px-4 py-3 placeholder-gray-400 shadow-sm focus:ring-2 focus:ring-indigo-200" />
+
+            <button type="submit"
+                    class="rounded-xl px-4 py-3 bg-gradient-to-tr from-pink-400 to-amber-300 text-white font-semibold shadow hover:scale-105 hover:shadow-lg transform transition">
+              Add
+            </button>
+          </form>
+        </div>
+
+        <div class="mt-4 text-xs text-gray-400 flex gap-3">
+          <div class="inline-flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-rose-200"></span>
+            <span>Keep habits small</span>
+          </div>
+          <div class="inline-flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-amber-200"></span>
+            <span>Celebrate small wins</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HABITS GRID -->
+    <section>
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold">Your Habits</h3>
+        <div class="text-sm text-gray-500">Showing <strong id="habit-count">0</strong> habits</div>
+      </div>
+
+      <div id="habits-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="mt-12 text-center text-sm text-gray-500 py-6 border-t border-gray-200">
+    <p>Built with ❤️</p>
+  </footer>
+
+  <!-- SCRIPT: ADD HABIT & PARTICLE BACKGROUND -->
+  <script>
+    // ===== HABIT ADDING =====
+    const habitForm = document.getElementById('habit-form');
+    const habitsGrid = document.getElementById('habits-grid');
+    const habitCount = document.getElementById('habit-count');
+
+    habitForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('habit-name').value.trim();
+      const goal = document.getElementById('habit-goal').value.trim();
+      if (!name || !goal) return;
+
+      const card = document.createElement('article');
+      card.className = 'bg-white rounded-2xl p-5 shadow-md hover:shadow-xl transition transform hover:-translate-y-1 min-h-[200px]';
+      card.innerHTML = `
+        <div class="flex items-start gap-4">
+          <div class="flex-none w-12 h-12 rounded-full bg-pink-100 grid place-items-center">
+            <svg class="w-6 h-6 text-pink-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 20v-8"></path>
+              <path d="M6 12h12"></path>
+              <path d="M8 8h8"></path>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <h4 class="font-semibold text-lg">${name}</h4>
+            <p class="text-sm text-gray-500 mt-1">Goal: ${goal}</p>
+            <div class="mt-4 flex items-center gap-3">
+              <button class="px-3 py-1 rounded-full bg-emerald-200 text-emerald-700 text-sm font-medium shadow-sm hover:scale-105 transform transition">Mark Done</button>
+              <button class="px-3 py-1 rounded-full bg-red-50 text-red-600 text-sm font-medium shadow-sm hover:scale-105 transform transition" onclick="this.closest('article').remove(); updateCount();">Delete</button>
+            </div>
+          </div>
+        </div>
+      `;
+      habitsGrid.appendChild(card);
+      habitForm.reset();
+      updateCount();
+    });
+
+    function updateCount() {
+      habitCount.textContent = habitsGrid.children.length;
+    }
+
+    // ===== PARTICLE BACKGROUND =====
+    const canvas = document.getElementById("bg-canvas");
+    const ctx = canvas.getContext("2d");
+    let w = canvas.width = window.innerWidth;
+    let h = canvas.height = window.innerHeight;
+    const mouse = { x: null, y: null, radius: 100 };
+
+    window.addEventListener('mousemove', function(e) {
+        mouse.x = e.x;
+        mouse.y = e.y;
+    });
+
+    window.addEventListener('resize', function() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+    });
+
+    class Particle {
+        constructor() {
+            this.x = Math.random() * w;
+            this.y = Math.random() * h;
+            this.size = Math.random() * 2 + 1;
+            this.speedX = (Math.random() - 0.5) * 0.5;
+            this.speedY = (Math.random() - 0.5) * 0.5;
+        }
+        draw() {
+            ctx.fillStyle = '#f472b6';
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+            ctx.fill();
+        }
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            if(this.x < 0 || this.x > w) this.speedX *= -1;
+            if(this.y < 0 || this.y > h) this.speedY *= -1;
+
+            let dx = mouse.x - this.x;
+            let dy = mouse.y - this.y;
+            let distance = Math.sqrt(dx*dx + dy*dy);
+            if(distance < mouse.radius){
+                this.x -= dx/50;
+                this.y -= dy/50;
+            }
+        }
+    }
+
+    let particlesArray = [];
+    const numberOfParticles = 80;
+    for(let i=0;i<numberOfParticles;i++){
+        particlesArray.push(new Particle());
+    }
+
+    function connect() {
+        let opacityValue = 1;
+        for(let a=0;a<particlesArray.length;a++){
+            for(let b=a;b<particlesArray.length;b++){
+                let dx = particlesArray[a].x - particlesArray[b].x;
+                let dy = particlesArray[a].y - particlesArray[b].y;
+                let distance = Math.sqrt(dx*dx + dy*dy);
+                if(distance < 120){
+                    opacityValue = 1 - (distance/120);
+                    ctx.strokeStyle = `rgba(236,72,153,${opacityValue})`;
+                    ctx.lineWidth = 0.8;
+                    ctx.beginPath();
+                    ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                    ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0,0,w,h);
+        particlesArray.forEach(p => { p.update(); p.draw(); });
+        connect();
+        requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+
+</body>
+</html>
