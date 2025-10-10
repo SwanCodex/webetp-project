@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>About — Habit Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .header-glow { box-shadow: 0 6px 18px rgba(58, 83, 155, 0.06); }
+    input:focus, button:focus { outline: none; box-shadow: 0 0 0 4px rgba(99,102,241,0.08); }
+  </style>
+</head>
+<body class="bg-gradient-to-b from-rose-50 via-rose-25 to-white min-h-screen font-sans antialiased text-gray-800">
+
+  <!-- NAVBAR -->
+ <header class="header-glow sticky top-0 z-30 bg-white/80 backdrop-blur-md">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav class="flex items-center justify-between h-16">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-pink-300 to-amber-300 flex items-center justify-center shadow-md">
+          <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 21s-1-.45-2.1-1.36C6.8 16.9 4 14.1 4 10.9 4 8.3 6.24 6 8.86 6c1.6 0 3 .86 3.97 2.09C13.14 6.86 14.54 6 16.14 6 18.76 6 21 8.3 21 10.9c0 3.2-2.8 6-5.9 8.75C13 20.5 12 21 12 21z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold tracking-tight">Habit Tracker</h1>
+        </div>
+      </div>
+
+      <div class="hidden md:flex items-center gap-4">
+        <a class="text-sm px-3 py-1 rounded-full bg-white/60 border border-transparent hover:bg-white text-indigo-600 font-medium shadow-sm" href="index.html">Home</a>
+        <a class="text-sm text-indigo-600 font-semibold" href="about.html">About</a>
+      </div>
+
+      <div class="md:hidden">
+        <button class="p-2 rounded-md bg-white/60 shadow-sm">
+          <svg class="w-5 h-5 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <section class="mb-8">
+      <h2 class="text-3xl font-bold mb-4">About Habit Tracker</h2>
+      <p class="text-gray-600 text-lg mb-4">Habit Tracker is a simple, fun, and visually appealing tool to help you build consistent habits. Using cute, rounded cards and easy-to-use forms, you can track small daily actions and celebrate your progress.</p>
+      <p class="text-gray-600 text-lg">The idea is to start small, track consistently, and stay motivated with visual feedback. Whether it's drinking water, reading, or exercising, Habit Tracker keeps your goals visible and reachable.</p>
+    </section>
+
+    <section class="bg-white rounded-2xl p-6 shadow-lg">
+      <h3 class="text-2xl font-semibold mb-4">Why we built this</h3>
+      <ul class="list-disc list-inside text-gray-600 space-y-2">
+        <li>To simplify habit tracking with minimal friction.</li>
+        <li>Provide an engaging, cute interface that motivates users.</li>
+        <li>Encourage small, daily wins that lead to long-term consistency.</li>
+        <li>Practice UI/UX design skills using Tailwind CSS.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="mt-12 text-center text-sm text-gray-500">
+    <p>Built with ❤️ </p>
+  </footer>
+</body>
+</html>
