@@ -125,19 +125,27 @@
 
   <!-- SCRIPT: ADD HABIT & PARTICLE BACKGROUND -->
   <script>
-    // ===== HABIT ADDING =====
     const habitForm = document.getElementById('habit-form');
     const habitsGrid = document.getElementById('habits-grid');
     const habitCount = document.getElementById('habit-count');
 
-    habitForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const name = document.getElementById('habit-name').value.trim();
-      const goal = document.getElementById('habit-goal').value.trim();
-      if (!name || !goal) return;
+    // Fetch and render habits from backend
+    async function fetchHabits() {
+      try {
+        const res = await fetch('http://localhost:5000/habits');
+        const data = await res.json();
+        habitsGrid.innerHTML = '';
+        data.forEach(habit => renderHabit(habit));
+        habitCount.textContent = data.length;
+      } catch (err) {
+        console.error('Failed to fetch habits', err);
+      }
+    }
 
+    // Render a single habit card
+    function renderHabit(habit) {
       const card = document.createElement('article');
-      card.className = 'bg-white rounded-2xl p-5 shadow-md hover:shadow-xl transition transform hover:-translate-y-1 min-h-[200px]';
+      card.className = `bg-white rounded-2xl p-5 shadow-md hover:shadow-xl transition transform hover:-translate-y-1 min-h-[200px] ${habit.completed ? 'opacity-50 line-through' : ''}`;
       card.innerHTML = `
         <div class="flex items-start gap-4">
           <div class="flex-none w-12 h-12 rounded-full bg-pink-100 grid place-items-center">
@@ -148,23 +156,70 @@
             </svg>
           </div>
           <div class="flex-1">
-            <h4 class="font-semibold text-lg">${name}</h4>
-            <p class="text-sm text-gray-500 mt-1">Goal: ${goal}</p>
+            <h4 class="font-semibold text-lg">${habit.name}</h4>
+            <p class="text-sm text-gray-500 mt-1">Goal: ${habit.goal}</p>
             <div class="mt-4 flex items-center gap-3">
-              <button class="px-3 py-1 rounded-full bg-emerald-200 text-emerald-700 text-sm font-medium shadow-sm hover:scale-105 transform transition">Mark Done</button>
-              <button class="px-3 py-1 rounded-full bg-red-50 text-red-600 text-sm font-medium shadow-sm hover:scale-105 transform transition" onclick="this.closest('article').remove(); updateCount();">Delete</button>
+              <button class="px-3 py-1 rounded-full bg-emerald-200 text-emerald-700 text-sm font-medium shadow-sm hover:scale-105 transform transition">
+                ${habit.completed ? 'Undo' : 'Mark Done'}
+              </button>
+              <button class="px-3 py-1 rounded-full bg-red-50 text-red-600 text-sm font-medium shadow-sm hover:scale-105 transform transition">
+                Delete
+              </button>
             </div>
           </div>
         </div>
       `;
+
+      // Mark Done / Undo
+      const doneBtn = card.querySelector('button:first-child');
+      doneBtn.addEventListener('click', async () => {
+        try {
+          await fetch(`http://localhost:5000/habits/${habit._id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ completed: !habit.completed })
+          });
+          fetchHabits();
+        } catch (err) {
+          console.error('Failed to update habit', err);
+        }
+      });
+
+      // Delete
+      const deleteBtn = card.querySelector('button:last-child');
+      deleteBtn.addEventListener('click', async () => {
+        try {
+          await fetch(`http://localhost:5000/habits/${habit._id}`, { method: 'DELETE' });
+          fetchHabits();
+        } catch (err) {
+          console.error('Failed to delete habit', err);
+        }
+      });
+
       habitsGrid.appendChild(card);
-      habitForm.reset();
-      updateCount();
+    }
+
+    // Add new habit
+    habitForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('habit-name').value.trim();
+      const goal = document.getElementById('habit-goal').value.trim();
+      if (!name || !goal) return;
+      try {
+        await fetch('http://localhost:5000/habits', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, goal })
+        });
+        habitForm.reset();
+        fetchHabits();
+      } catch (err) {
+        console.error('Failed to add habit', err);
+      }
     });
 
-    function updateCount() {
-      habitCount.textContent = habitsGrid.children.length;
-    }
+    // Initial fetch
+    fetchHabits();
 
     // ===== PARTICLE BACKGROUND =====
     const canvas = document.getElementById("bg-canvas");
